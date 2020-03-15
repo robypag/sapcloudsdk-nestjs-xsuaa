@@ -1,66 +1,53 @@
 <a href="https://community.sap.com/topics/cloud-sdk"><img src="https://help.sap.com/doc/2324e9c3b28748a4ae2ad08166d77675/1.0/en-US/logo-with-js.svg" alt="SAP Cloud SDK for JavaScript Logo" height="122.92" width="226.773"/></a>
 
-# Welcome to Your Application!
-
-This is your **SAP Cloud Platform Cloud Foundry** application powered by the [SAP Cloud SDK for JavaScript](https://community.sap.com/topics/cloud-sdk) and [NestJS](https://nestjs.com/).
-
-## Getting started
-
-Everything is ready to go. 
-
-```bash
-# Run the application locally
-$ npm run start:dev
-
-# Open the application in your default browser
-$ open http://localhost:3000/
+# Testing XSSEC with NestJS flavour of SAP Cloud SDK
+Clone the project, npm install, create the _default-env.json_ file, providing VCAP_SERVICES variable for xsuaa:
+```json
+    "VCAP_SERVICES": {
+        "xsuaa": [{
+            "label": "xsuaa",
+            "provider": null,
+            "plan": "application",
+            "name": "your-xsuaa-service-name",
+            "tags": [
+                "xsuaa"
+            ],
+            "instance_name": "your-instance-name",
+            "binding_name": null,
+            "credentials": {
+                '...'
+            },
+            "syslog_drain_url": null,
+            "volume_mounts": []
+        }]
+    }
+```
+Go to approuter folder, npm install and create another _default-env.json_ file, provide the same VCAP_SERVICES as above and plus add:
+```json    
+    "destinations": [{
+        "name": "srv_api",
+        "url": "http://localhost:3000",
+        "forwardAuthToken": true
+    }]
 ```
 
-If you have the [Cloud Foundry CLI](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html) and are [logged in](https://docs.cloudfoundry.org/cf-cli/getting-started.html#login), you can deploy the application without any changes to the application.
+If needed, adapt _manifest.yml_ in both root and approuter folders to match your service instance names.
 
-```bash
-# Deploy your application to SAP Cloud Platform Cloud Foundry
-$ cf push
-```
+Passport Strategy configuration are provided in [AuthModule](https://github.com/robypag/sapcloudsdk-nestjs-xsuaa/tree/master/src/auth).
 
-## Testing
+Open 2 terminal windows:
 
-The project comes with unit and end-to-end tests. 
-Unit tests are located in the `src/` folder next to the modules and controllers, while end-to-end tests are in the `test/` folder.
+Approuter `cd approuter && npm start`
 
-```bash
-# Run unit tests
-$ npm run test
+Project Root `npm run start:dev`
 
-# Run e2e tests
-$ npm run test:e2e
-```
-
-## Continuous Integration
-
-This project is preconfigured to run with the [SAP Cloud SDK Pipeline](https://github.com/SAP/cloud-s4-sdk-pipeline).
-To get the installer follow the short [guide](https://github.com/SAP/cloud-s4-sdk-pipeline#download-and-installation).
-
-```bash
-# If you have the SAP Cloud SDK CLI installed, it can download the install script for you
-sap-cloud-sdk add-cx-server
-
-# Execute the script to start the Jenkins server
-$ ./cx-server start
-```
-
-Point the new Jenkins to your repository and it will automatically run the pipeline. 
-If the pipeline should deploy your application as well, you need to modify the `pipeline_config.yml`.
+Open `http://localhost:5000/testauth` provide your credentials in XSUAA login page and observe the error in the terminal.
 
 ## NestJS
 
 NestJS is a progressive [Node.js](http://nodejs.org) framework for building efficient and scalable server-side applications, heavily inspired by [Angular](https://angular.io). 
 
 The [Nest CLI](https://docs.nestjs.com/cli/usages) is a powerful tool and can help you create new controllers, modules and interfaces.
-
-## Support
-
-If you need support with the SAP Cloud SDK, the SAP Cloud SDK CLI or this project scaffold, feel free to open an issue on [GitHub](https://github.com/SAP/cloud-sdk-cli) or ask a question on [stackoverflow with tag [sap-cloud-sdk]](https://stackoverflow.com/questions/tagged/sap-cloud-sdk).
 
 ## License and Notice
 
