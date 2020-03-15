@@ -1,0 +1,15 @@
+applications:
+  - name: xsuua-test-approuter
+    routes:
+      - route: >-
+          xsuua-test-apps.cfapps.eu10.hana.ondemand.com
+    path: .
+    memory: 128M
+    buildpacks:
+      - nodejs_buildpack
+    env:
+      TENANT_HOST_PATTERN: >-
+        "xsuua-test-(.*).cfapps.eu10.hana.ondemand.com"
+    services:
+      - uaa-cv-api
+      - des-sbx-api
